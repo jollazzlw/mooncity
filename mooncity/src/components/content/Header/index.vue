@@ -19,7 +19,7 @@
         @click="likeArticle"
       ></div>
       <router-link :to="{ name: 'Exhibit' }"
-        ><img loop :src="avatar" alt="头像" />
+        ><img loop :src="mainUrl + '/user/avatar/' + avatar" alt="头像" />
       </router-link>
     </div>
     <!-- dont like too much  icon-->
@@ -32,7 +32,7 @@
     <div class="musicBar" :style="{ width: progressLength }"></div>
     <!-- musci -->
     <audio id="music" loop preload="auto">
-      <source type="audio/mpeg" :src="'http://localhost:5006/audio/' + music" />
+      <source type="audio/mpeg" :src="mainUrl + '/audio/' + music" />
     </audio>
   </div>
 </template>
@@ -53,7 +53,7 @@ export default {
     },
     avatar: {
       type: String,
-      default: "http://localhost:5006/user/avatar/avatar-1.jpg",
+      default: "avatar-1.jpg",
     },
   },
   data() {
@@ -72,7 +72,11 @@ export default {
   mounted() {
     this.initMusic();
   },
-
+  watch: {
+    music() {
+      this.initMusic();
+    },
+  },
   methods: {
     likeArticle() {
       // 先看下是不是喜欢过了，
@@ -110,6 +114,7 @@ export default {
       this.isPlay ? this.audioDOM.play() : this.audioDOM.pause();
     },
     handleMusicBar() {
+      if (!this.music) return;
       const fn = () => {
         setTimeout(() => {
           this.progressLength =
@@ -117,8 +122,8 @@ export default {
               (100 * this.audioDOM.currentTime) /
               this.audioDOM.duration
             ).toFixed(2) + "%";
-          console.log(this.audioDOM.currentTime);
-          console.log(this.audioDOM.duration);
+          /* console.log(this.audioDOM.currentTime);
+          console.log(this.audioDOM.duration); */
           // this.percent = result;
           if (this.isPlay) {
             fn();

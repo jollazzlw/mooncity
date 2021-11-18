@@ -7,11 +7,11 @@ const Router = require('koa-router')
 const imgRouter = new Router()
 
 
-
-imgRouter.get('/img/:audioName', (ctx, next) => {
-  const { audioName } = ctx.params;
+// 获取图片
+imgRouter.get('/img/:imgName', (ctx, next) => {
+  const { imgName } = ctx.params;
   ctx.response.set('content-type', 'image/jpeg')
-  ctx.body = fs.createReadStream(path.resolve('../', `public/image/${audioName}`))
+  ctx.body = fs.createReadStream(path.resolve('../', `public/image/${imgName}`))
 
 })
 

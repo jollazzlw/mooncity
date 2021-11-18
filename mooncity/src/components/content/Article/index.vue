@@ -7,6 +7,7 @@
       :class="`wow${item.index}`"
       :key="item.id"
     >
+      <!-- 图片 -->
       <div
         class="img-box flex align-center justify-center"
         @click="viewArticle(item.id)"
@@ -14,7 +15,7 @@
         <img
           :src="
             item.imgUrl
-              ? `${mainUrl}/img/${item.imgUrl}`
+              ? mainUrl + '/img/' + item.imgUrl
               : require('@assets/img/hmbb.jpg')
           "
           alt="图片飞了呢~"
@@ -23,13 +24,15 @@
       <div class="text-box">
         <div class="info">
           <div class="time">
-            {{ item.month }} {{ item.day }}, {{ item.year }}
+            {{ item.monthCh }} {{ item.day }}, {{ item.year }}
           </div>
           <div class="title" @click="viewArticle(item.id)">
             {{ item.title }}
           </div>
           <div class="description">
-            {{ item.content }}
+            {{
+              item.description || "客官里边请,点进来看看吧,给你kan好kan的,~~~"
+            }}
           </div>
         </div>
       </div>
@@ -92,6 +95,7 @@ export default {
       });
     },
   },
+
   methods: {
     toLoadMore() {
       this.LoadMore = false;

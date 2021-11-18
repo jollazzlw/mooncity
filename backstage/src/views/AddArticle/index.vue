@@ -5,7 +5,7 @@
       <span></span>
       <div>{{ userInfo.motto }}</div>
     </div>
-    <!-- 三个input -->
+    <!-- Input：title，description，musicName -->
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="ruleForm">
       <el-form-item prop="title">
         <el-input
@@ -26,23 +26,45 @@
         ></el-input>
       </el-form-item>
     </el-form>
-    <!-- 上传文章封面图片 -->
+    <!-- upload cover picture  and  musci-->
     <div class="flex align-center">
       <el-upload
         drag
         class="avatar-uploader"
-        action="http://localhost:5006/upload"
+        :action="mainUrl + '/upload'"
         :headers="token"
         name="image"
         :show-file-list="false"
-        :on-success="handleAvatarSuccess"
-        :before-upload="beforeAvatarUpload"
+        :on-success="handleImgSuccess"
+        :before-upload="beforeImgUpload"
       >
         <img v-if="image" :src="image" class="avatar" />
-        <i v-else class="el-icon-upload"></i>
+        <i v-else class="iconfont icon-image"></i>
         <div class="el-upload__text">拖拽上传封面图片，或<em>点击上传</em></div>
       </el-upload>
+      <!-- 上传音乐 -->
+      <el-upload
+        drag
+        class="avatar-uploader"
+        :action="mainUrl + '/upload'"
+        :headers="token"
+        name="audio"
+        :show-file-list="false"
+        :on-success="handleMusicSuccess"
+        :before-upload="beforeMusciUpload"
+      >
+        <!-- <img v-if="musicUrl" :src="image" class="avatar" /> -->
+        <i class="iconfont icon-music" v-show="!musicUrl"></i>
+        <i class="iconfont icon-wancheng" v-show="musicUrl"></i>
+        <div class="el-upload__text" v-show="!musicUrl">
+          拖拽上传音乐，或<em>点击上传</em>
+        </div>
+        <div class="el-upload__text musicInfo" v-show="musicUrl">
+          BGM添加完毕~~
+        </div>
+      </el-upload>
     </div>
+
     <!-- mk -->
     <MarkDown @contentChange="contentChange" />
     <!-- 提交按钮 -->
@@ -74,6 +96,7 @@ export default {
         musicName: "",
         imgUrl: "",
         content: "",
+        musicUrl: "",
       },
       rules: {
         title: [
@@ -82,28 +105,50 @@ export default {
         ],
       },
       image: "",
+      musicUrl: "",
       token: { authorization: "Bearer " + localStorage.getItem("token") },
     };
   },
   methods: {
-    handleAvatarSuccess(res, file) {
+    // 封面图片上传处理
+    beforeImgUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 4;
+      if (!isJPG) {
+        this.$message.error("上传图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传图片大小不能超过 4MB!");
+      }
+      return isJPG && isLt2M;
+    },
+    handleImgSuccess(res, file) {
       // res jiushi
       this.image = URL.createObjectURL(file.raw);
       this.ruleForm.imgUrl = res.data;
-      console.log(this.ruleForm.imgUrl);
       this.$message.success("图片上传成功");
     },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 4;
 
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
+    //音乐上传处理
+    beforeMusciUpload(file) {
+      const isLt2M = file.size / 1024 / 1024 < 6;
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 4MB!");
+        this.$message.error("上传的音频大小不能超过 6MB!");
       }
-      return isJPG && isLt2M;
+
+      return isLt2M;
+    },
+    handleMusicSuccess(res, file) {
+      const temp = this.musicUrl;
+      this.musicUrl = res.data;
+      this.ruleForm.musicUrl = this.musicUrl;
+      console.log(this.ruleForm.musicUrl);
+      temp
+        ? this.$message({
+            message: "已修改BGM",
+            type: "warning",
+          })
+        : this.$message.success("音频上传成功");
     },
 
     contentChange(contents) {
@@ -113,6 +158,7 @@ export default {
       this.$refs["ruleForm"].validate((valid) => {
         if (valid) {
           const data = this.ruleForm;
+          console.log(this.ruleForm.musicUrl);
           addArticle(data).then((res) => {
             this.$message.success("添加文章成功");
           });
@@ -148,7 +194,9 @@ export default {
   line-height: 178px;
   text-align: center;
 }
-
+.musicInfo {
+  color: #409eff;
+}
 .ruleForm {
   flex: 1;
   margin-top: 40px;

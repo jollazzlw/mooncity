@@ -16,15 +16,16 @@ module.exports = {
       },
 
     },
-      config.optimization.splitChunks.cacheGroups = {
-        styles: {
-          name: 'styles',
-          test: /\.(le|sa|sc|c)ss$/,
-          chunks: 'all',
-          reuseExistingChunk: true,
-          minChunks: 1,
-          enforce: true
-        }
+      process.env.NODE_ENV === 'production' ? config.mode = 'production' : config.mode = 'development'
+    config.optimization.splitChunks.cacheGroups = {
+      styles: {
+        name: 'styles',
+        test: /\.(le|sa|sc|c)ss$/,
+        chunks: 'all',
+        reuseExistingChunk: true,
+        minChunks: 1,
+        enforce: true
       }
+    }
   }
 }

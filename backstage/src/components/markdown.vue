@@ -33,11 +33,11 @@ export default {
     async imgAdd(pos, $file) {
       // 将图片上传
       const formdata = new FormData();
-      formdata.append("file", $file);
+      formdata.append("image", $file);
       // console.log(formdata.get("file"));
       try {
         const res = await uploadImg(formdata);
-        const url = res.data.data;
+        const url = `${this.mainUrl}/img/${res.data.data}`;
         this.$refs.md.$img2Url(pos, url);
       } catch (error) {
         console.error(error);

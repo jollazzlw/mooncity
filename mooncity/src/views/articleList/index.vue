@@ -2,9 +2,7 @@
   <div class="flex flex-column align-center">
     <div class="list">
       <ul class="monUl" v-for="(item, index) in datas" :key="index">
-        <li class="monTitle">
-          {{ item[0].month }},{{ item[0].day }},{{ item[0].year }}
-        </li>
+        <li class="monTitle">{{ item[0].monthCh }},{{ item[0].year }}</li>
         <!-- 下面的to是到在routes里面注册了的Detail组件中去了，由于注册的detail是动态路由detail/:id  所以携带id过去才能找到对应的文章啊-->
         <router-link
           custom
@@ -107,9 +105,9 @@ export default {
       );
       const { total, articleList, len } = result;
 
-      articleList.forEach((item) => {
+      /*  articleList.forEach((item) => {
         this.$store.dispatch("dataHandle", ...item); //处理时间的格式
-      });
+      }); */
       this.datas.push(...articleList);
       // console.log(this.datas);
       this.len += len;

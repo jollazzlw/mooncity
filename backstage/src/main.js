@@ -16,6 +16,15 @@ import 'mavon-editor/dist/css/index.css'
 Vue.use(mavonEditor)
 
 
+// 导入iconfont
+import '@assets/font/iconfont.css'
+
+
+//到时候要上传的地址的地址
+let mainUrl = '';
+process.env.NODE_ENV === 'production' ? mainUrl = 'http://www.zlw.cool:5006' : mainUrl = 'http://localhost:5006'
+Vue.prototype.mainUrl = mainUrl
+
 Vue.config.productionTip = false
 
 new Vue({

@@ -1,8 +1,12 @@
 import axios from 'axios'
 import { Message } from "element-ui"
 
+let baseURL = ''
+process.env.NODE_ENV === 'production' ? baseURL = 'http://www.zlw.cool:5006' : baseURL = 'http://localhost:5006'
+
+
 const instance = axios.create({
-  baseURL: 'http://localhost:5006',
+  baseURL,
   timeout: 15000,
   // `withCredentials` 表示跨域请求时是否需要使用凭证
   withCredentials: true
@@ -40,7 +44,8 @@ instance.interceptors.response.use(resp => {
 }, err => {
   if (err.response.status === 403) {
     localStorage.removeItem("token")
-    Message.error('登陆已过期,请重新登陆')
+    Message.error('111登陆已过期,请重新登陆')
+
   }
   return Promise.reject(err)
 })

@@ -7,7 +7,7 @@ const Router = require('koa-router')
 const audioRouter = new Router()
 
 
-
+// 获取音频
 audioRouter.get('/audio/:audioName', (ctx, next) => {
   const { audioName } = ctx.params;
   ctx.response.set('content-type', 'audio/mp3')

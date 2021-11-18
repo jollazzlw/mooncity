@@ -40,55 +40,18 @@ class artServ {
     })
 
     if (!isHome) { rows = this.#listByYear(rows); }   //获取进行时间排序后的文章
+    else {
+
+
+      rows.forEach(item => this.#handleDate(item))
+    }
+    // console.log(rows);
     return {
       total: count,
       articleList: rows,
       len,
     }
 
-  }
-
-  // sort article by year des
-  #listByYear(rows) {
-    const yearSet = new Set();
-    rows.forEach(item => {
-      // console.log(typeof item.createdAt);
-      const year = item.createdAt.split('-')[0];     //createdAt format 'YYYY-MM-DD HH:mm:ss'
-      yearSet.has(year) ? '' : yearSet.add(year);
-    })
-    const yearArr = [...yearSet];   //将文章有的全部year存入数组
-    // console.log('年数组', yearArr);
-    yearArr.sort((a, b) => b - a)        //降序排列
-    const monthArr = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01']
-    const yearGroupArr = [] // 把文章按照年份分组
-
-    yearArr.forEach(year => {
-      const resultArr = rows.filter(item => {
-
-        const [rowYear, rowMonth, surplus] = item.createdAt.split('-');
-        // console.log(rowYear, rowMonth, surplus);
-        let rowDay = surplus.split(' ')[0];
-
-        rowDay[0] === '0' ? rowDay = rowDay.slice(1, 2) : '';
-
-        // 给文章加上年月日属性
-        if (rowYear === year) {
-          item.dataValues.year = year;
-        }
-        item.dataValues.month = rowMonth
-        item.dataValues.monthCh = this.#handleDateMonth(rowMonth)
-        item.dataValues.day = rowDay;
-        return rowYear === year    //以年为单位的数组返回一组一组的文章[一个数组里面就是一个年的]
-      })
-
-      if (resultArr.length === 0) return
-      monthArr.forEach(month => {
-        const monthResult = resultArr.filter(item => item.dataValues.month === month)
-        monthResult.length !== 0 && yearGroupArr.push(monthResult);
-      })
-    })
-
-    return yearGroupArr
   }
 
   //get article detail by article_id and user_id  
@@ -111,7 +74,7 @@ class artServ {
     })
     if (!result) return result
     result.increment('visitsNum', { by: 1 })     //只要每次请求一次数据，就自+1
-    result = result.toJSON()
+    // result = result.toJSON()
     this.#handleDetailResult(result)
     return result;
   }
@@ -124,24 +87,74 @@ class artServ {
     return true
 
   }
+  // sort article by year des ， every month articl to one arr
+  #listByYear(rows) {
+    const yearSet = new Set();
+    // 哪到文章 有哪些 年
+    rows.forEach(item => {
+      // console.log(typeof item.createdAt);
+      const year = item.createdAt.split('-')[0];     //createdAt format 'YYYY-MM-DD HH:mm:ss'
+      yearSet.has(year) ? '' : yearSet.add(year);
+    })
+    const yearArr = [...yearSet];   //将文章有的全部year存入数组
 
-  // 一些用来处理数据的使用方法
+
+    yearArr.sort((a, b) => b - a)        //降序排列
+    const monthArr = ['12', '11', '10', '09', '08', '07', '06', '05', '04', '03', '02', '01']
+    const yearGroupArr = [] // 把文章按照年份分组
+
+    yearArr.forEach(year => {
+      const resultArr = rows.filter(item => {
+        const [rowYear, rowMonth, surplus] = item.createdAt.split('-');
+        // console.log(rowYear, rowMonth, surplus);
+        let rowDay = surplus.split(' ')[0];
+        rowDay[0] === '0' ? rowDay = rowDay.slice(1, 2) : '';
+        // 给文章加上年月日属性
+        if (rowYear === year) {
+          item.dataValues.year = year;
+
+        }
+        item.dataValues.month = rowMonth
+        item.dataValues.monthCh = this.#handleDateMonth(rowMonth)
+        item.dataValues.day = rowDay;
+        return rowYear === year    //以年为单位的数组返回一组一组的文章[一个数组里面就是一个年的]
+      })
+
+      if (resultArr.length === 0) return
+      monthArr.forEach(month => {
+        const monthResult = resultArr.filter(item => item.dataValues.month === month)
+        monthResult.length !== 0 && yearGroupArr.push(monthResult);
+      })
+    })
+
+    return yearGroupArr
+  }
+  // 添加 字数，喜爱值，以及年月日
   #handleDetailResult(result) {
+    console.log(result);
     result.users.length === 0 ? result.isLike = false : result.isLike = true // 如果等于0就是不喜欢该文章
     const len = result.content.replace(/<\/?.+?>/g, "").replace(/(\r\n|\n|\r)/gm, "").length  //有多少字
     result.textWordNum = len
+    this.#handleDate(result)
+    delete result.users
+  }
+
+  // 添加年月日属性
+  #handleDate(result) {
+
     const [year, month, surplus] = result.createdAt.split('-');
     const monthCh = this.#handleDateMonth(month)
     const day = surplus[0] === '0' ? surplus.slice(1, 2) : surplus.slice(0, 2)
     const temp = ['year', 'month', 'monthCh', 'day']
     const dateT = [year, month, monthCh, day]
-    temp.forEach((item, index) => { result[item] = dateT[index] })
-    delete result.users
+    temp.forEach((item, index) => { result.dataValues[item] = dateT[index] })
+
   }
+
+  // 添加中文的月
   #handleDateMonth(month) {
     const arr = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
-    return arr[parseInt(month)]
-
+    return arr[parseInt(month - 1)]
   }
 }
 module.exports = new artServ()

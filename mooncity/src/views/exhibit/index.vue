@@ -28,7 +28,7 @@ export default {
       pageInfo: {
         pageSize: 5, //offset
         pageNum: 1, //limit
-        isHome: true, //后端传过来一个大数组，按时间降序
+        isHome: true, //后端传过来一个大数组【没有按月分组】，按时间降序
       },
       len: 0, //现在有多少条数据
     };
@@ -48,16 +48,17 @@ export default {
         "getArticleList",
         this.pageInfo
       );
+
       const { total, articleList, len } = result;
 
-      articleList.forEach((item) => {
+      /* articleList.forEach((item) => {
         this.$store.dispatch("dataHandle", item); //处理时间的格式
-      });
+      }); */
+      console.log(articleList);
       this.datas.push(...articleList);
       this.len += len;
       this.isNext = this.len < total;
       this.isLoader = false;
-      // console.log(this.datas);
     },
   },
 };

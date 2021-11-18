@@ -1,7 +1,8 @@
 import axios from "axios";
 import { Message } from "element-ui";
 
-const baseURL = "http://localhost:5006"
+let baseURL = ''
+process.env.NODE_ENV === 'production' ? baseURL = 'http://www.zlw.cool:5006' : baseURL = 'http://localhost:5006'
 
 const instance = axios.create({
   baseURL,
@@ -13,7 +14,7 @@ const instance = axios.create({
 instance.interceptors.request.use((req) => {
   const token = localStorage.getItem('token')
   if (token) {
-    req.headers['authorization'] = 'Beaere ' + token
+    req.headers['authorization'] = 'Bearer ' + token
   }
   return req
 }, (err) => {

@@ -19,7 +19,10 @@ import 'github-markdown-css/github-markdown.css'
 // 导入iconfont
 import '@assets/font/iconfont.css'
 
-Vue.prototype.mainUrl = 'http://localhost:5006'
+//请求的地址
+let mainUrl = '';
+process.env.NODE_ENV === 'production' ? mainUrl = 'http://www.zlw.cool:5006' : mainUrl = 'http://localhost:5006'
+Vue.prototype.mainUrl = mainUrl
 
 Vue.config.productionTip = false
 

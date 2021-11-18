@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 // 引入数据库的配置信息
-const { localDbInfo: { dbName, userName, password, host } } = require('../../encrypt/dbEncrypt')
+const { localDbInfo, aliDbInfo: { dbName, userName, password, host } } = require('../../encrypt/dbEncrypt')
 
 // 连接数据库
 const sequelize = new Sequelize(dbName, userName, password, host);

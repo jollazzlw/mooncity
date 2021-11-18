@@ -1,8 +1,10 @@
 import axios from 'axios'
 import { Message } from "element-ui"
+let baseURL = ''
+process.env.NODE_ENV === 'production' ? baseURL = 'http://www.zlw.cool:5006' : baseURL = 'http://localhost:5006'
 
 const instance = axios.create({
-  baseURL: 'http://localhost:5006',
+  baseURL,
   timeout: 15000,
   // `withCredentials` 表示跨域请求时是否需要使用凭证
   withCredentials: true,

@@ -1,0 +1,30 @@
+{
+  "id": "2947517",
+  "name": "myblog_backstage",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1293",
+      "name": "完成",
+      "font_class": "wancheng",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "7736242",
+      "name": "music",
+      "font_class": "music",
+      "unicode": "e902",
+      "unicode_decimal": 59650
+    },
+    {
+      "icon_id": "12669090",
+      "name": "image",
+      "font_class": "image",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    }
+  ]
+}
